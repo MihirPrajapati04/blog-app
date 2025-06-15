@@ -125,7 +125,7 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({ articleId }) => {
       </Button>
       {error && (
         <p className="text-xs text-red-500 border border-red-400 rounded p-2 bg-red-50">
-          {error}
+          you must be logged in and the author of this article to delete it.
         </p>
       )}
     </div>
