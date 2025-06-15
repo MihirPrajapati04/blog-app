@@ -40,7 +40,19 @@ export async function ArticleDetailPage({ article }: ArticleDetailPageProps) {
  
   const likes = await prisma.likes.findMany({where:{articleId:article.id}});
   const {userId} = await auth();
+  if (!userId) {
+    return <div className="text-center text-red-500">You must be logged in to view this article.</div>;
+  }
   const user = await prisma.user.findUnique({where:{clerkUserId:userId as string}});
+
+  
+if (!user) {
+  return (
+    <div className="text-center text-red-500">
+      User not found in the database.
+    </div>
+  );
+}
 
   const isLiked = likes.some((like) => like.userId === user?.id);
   
