@@ -1,5 +1,6 @@
 "use client";
 import React, { useTransition } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import {
@@ -89,20 +90,40 @@ type DeleteButtonProps = {
   articleId: string;
 };
 
-const DeleteButton: React.FC<DeleteButtonProps> = ({ articleId }) => {
+export const DeleteButton: React.FC<DeleteButtonProps> = ({ articleId }) => {
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDelete = () => {
+    setError(null); // reset error
+
+    startTransition(async () => {
+      try {
+        await deleteArticle(articleId);
+        // optionally reload or redirect
+        window.location.reload(); // or use router.refresh()
+      } catch (err: any) {
+        setError(err.message || "Something went wrong.");
+      }
+    });
+  };
 
   return (
-    <form
-      action={() =>
-        startTransition(async () => {
-          await deleteArticle(articleId);
-        })
-      }
-    >
-      <Button disabled={isPending} variant="ghost" size="sm" type="submit">
+    <div className="space-y-2">
+      <Button
+        disabled={isPending}
+        variant="ghost"
+        size="sm"
+        type="button"
+        onClick={handleDelete}
+      >
         {isPending ? "Deleting..." : "Delete"}
       </Button>
-    </form>
+      {error && (
+        <p className="text-xs text-red-500 border border-red-400 rounded p-2 bg-red-50">
+          {error}
+        </p>
+      )}
+    </div>
   );
 };
