@@ -102,9 +102,13 @@ export const DeleteButton: React.FC<DeleteButtonProps> = ({ articleId }) => {
         await deleteArticle(articleId);
         // optionally reload or redirect
         window.location.reload(); // or use router.refresh()
-      } catch (err: any) {
-        setError(err.message || "Something went wrong.");
+      } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong.");
       }
+    }
     });
   };
 
